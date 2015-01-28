@@ -1,0 +1,28 @@
+{
+    "name": "io.logit",
+    "cordova_name": "Logit.io Plugin",
+    "version": "0.1.0",
+    "description": "Cordova plugin to integrate with logit.io logging system",
+    "license": "MIT License",
+    "repo": "https://github.com/logit.io/cordova.git",
+    "keywords": [
+        "cordova",
+        "logit",
+        "io"
+    ],
+    "platforms": [
+        "android",
+        "amazon-fireos",
+        "ubuntu",
+        "ios",
+        "wp7",
+        "wp8",
+        "windows8"
+    ],
+    "engines": [
+        {
+            "name": "cordova",
+            "version": ">=3.0.0"
+        }
+    ]
+}

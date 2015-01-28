@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    id="io.logit"
+    version="0.1.0">
+  <engines>
+    <engine name="cordova" version=">=3.0.0" />
+  </engines>
+  
+  <name>Logit.io Plugin</name>
+  <description>Cordova plugin to integrate with logit.io logging system</description>
+  <author>Dave Alden</author>
+  <license>MIT License</license>
+  
+  <js-module src="www/logit.js" name="Logit">
+    <clobbers target="window.logit" />
+  </js-module>
+  
+</plugin>
