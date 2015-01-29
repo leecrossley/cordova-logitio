@@ -4,12 +4,8 @@
     "version": "0.1.0",
     "description": "Cordova plugin to integrate with logit.io logging system",
     "license": "MIT License",
-    "repo": "https://github.com/logit.io/cordova.git",
-    "keywords": [
-        "cordova",
-        "logit",
-        "io"
-    ],
+    "repo": "https://github.com/logit-io2/cordova-logitio.git",
+    "keywords": ["cordova","phonegap","ios","android","logit","io"],
     "platforms": [
         "android",
         "amazon-fireos",
