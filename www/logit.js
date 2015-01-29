@@ -229,7 +229,7 @@
         function sendMessageQueue() {
             var message,
                 request;
-            while (!this.queue.isEmpty() && navigator.onLine && !this.pausedSending) {
+            while (this.queue && !this.queue.isEmpty() && navigator.onLine && !this.pausedSending) {
                 message = this.queue.pop();
                 request = new AjaxRequest(this.uri, this.apiKey, this.options.onSuccess || function(){}, this.options.onError || function(){});
                 request.send(message);
@@ -275,6 +275,7 @@
             document.addEventListener('resume', checkAndSend);
             document.addEventListener('online', checkAndSend);
             this.initialised = true;
+            checkAndSend.call(this);
         };
         
         this.pauseSending = function(){
