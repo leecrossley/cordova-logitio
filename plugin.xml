@@ -1,18 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-    id="io.logit"
-    version="0.1.0">
-  <engines>
-    <engine name="cordova" version=">=3.0.0" />
-  </engines>
-  
-  <name>Logit.io Plugin</name>
-  <description>Cordova plugin to integrate with logit.io logging system</description>
-  <author>Dave Alden</author>
-  <license>MIT License</license>
-  
-  <js-module src="www/logit.js" name="Logit">
-    <clobbers target="window.logit" />
-  </js-module>
-  
+id="io.logit"
+version="0.1.0">
+    <engines>
+        <engine name="cordova" version=">=3.0.0" />
+    </engines>
+    <name>Logit.io Plugin</name>
+    <description>Cordova plugin to integrate with logit.io logging system</description>
+    <author>Dave Alden</author>
+    <license>MIT License</license>
+
+    <!-- android -->
+    <platform name="android">
+        <js-module src="www/logit.js" name="Logit">
+        </js-module>
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="Logit">
+                <param name="android-package" value="io.logit"/>
+            </feature>
+        </config-file>
+    </platform>
+
+    <!-- amazon-fireos -->
+    <platform name="amazon-fireos">
+        <js-module src="www/logit.js" name="Logit">
+        </js-module>
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="Logit">
+                <param name="android-package" value="io.logit"/>
+            </feature>
+        </config-file>
+    </platform>
+
+    <!-- ubuntu -->
+    <platform name="ubuntu">
+        <js-module src="www/logit.js" name="Logit">
+        </js-module>
+    </platform>
+
+    <!-- ios -->
+    <platform name="ios">
+        <js-module src="www/logit.js" name="Logit">
+        </js-module>
+        <config-file target="config.xml" parent="/*">
+            <feature name="Logit">
+                <param name="ios-package" value="CDVLogit" />
+            </feature>
+        </config-file>
+    </platform>
+
+    <!-- wp7 -->
+    <platform name="wp7">
+        <js-module src="www/logit.js" name="Logit">
+        </js-module>
+        <config-file target="config.xml" parent="/*">
+            <feature name="Logit">
+                <param name="wp-package" value="Logit"/>
+            </feature>
+        </config-file>
+    </platform>
+
+    <!-- wp8 -->
+    <platform name="wp8">
+        <js-module src="www/logit.js" name="Logit">
+        </js-module>
+        <config-file target="config.xml" parent="/*">
+            <feature name="Logit">
+                <param name="wp-package" value="Logit"/>
+            </feature>
+        </config-file>
+    </platform>
+
+    <!-- windows8 -->
+    <platform name="windows8">
+        <js-module src="www/logit.js" name="Logit">
+        </js-module>
+    </platform>
+
+    <!-- windows universal apps (Windows 8.1, Windows Phone 8.1, Windows 8.0) -->
+    <platform name="windows">
+        <js-module src="www/logit.js" name="Logit">
+        </js-module>
+    </platform>
+
+    <!-- firefoxos -->
+    <platform name="firefoxos">
+        <js-module src="www/logit.js" name="Logit">
+        </js-module>
+    </platform>
 </plugin>

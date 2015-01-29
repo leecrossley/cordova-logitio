@@ -8,6 +8,7 @@
         this.failureCallback = failureCallback;
     }
 
+
     AjaxRequest.prototype = {
         createXhr : function() {
             var xhr = this.xhr = new XMLHttpRequest();
@@ -20,7 +21,7 @@
             var xhr = this.xhr;
             xhr.open('POST', this.uri, true);
             xhr.setRequestHeader('API-Key', this.apiKey);
-            xmlhttp.setRequestHeader('Content-type','application/json');
+            xhr.setRequestHeader('Content-type', 'application/json');
         },
         send : function(data) {
             try {
@@ -47,19 +48,21 @@
                 }
                 this.successCallback(xhr.responseText);
             }
-        },        
+        },
     };
-    
+
     function PersistedArray(localStorageId) {
         this.localStorageId = localStorageId;
         this.load();
     }
+
+
     PersistedArray.prototype = {
-        length: 0,
-        isEmpty: function(){
-            retrun this.length === 0;
+        length : 0,
+        isEmpty : function() {
+            return this.length === 0;
         },
-        load: function () {
+        load : function() {
             var value = localStorage.getItem(this.localStorageId);
             if (value === null) {
                 value = '[]';
@@ -67,21 +70,21 @@
             this.value = JSON.parse(value);
             this.length = this.value.length;
         },
-        save: function () {
+        save : function() {
             this.length = this.value.length;
             localStorage.setItem(this.localStorageId, JSON.stringify(this.value));
         },
-        clear: function () {
+        clear : function() {
             this.value = [];
             this.save();
         },
-        copy: function (newId) {
+        copy : function(newId) {
             var newPersistedArray = new PersistedArray(newId);
             newPersistedArray.value = this.value.concat([]);
             newPersistedArray.save();
             return newPersistedArray;
         },
-        add: function (value) {
+        add : function(value) {
             if (!this.contains(value)) {
                 //we don't error on this one
                 this.value.push(value);
@@ -89,7 +92,7 @@
             }
             return value;
         },
-        shift: function (value) {
+        shift : function(value) {
             if (!this.contains(value)) {
                 //we don't error on this one
                 this.value.shift(value);
@@ -99,7 +102,7 @@
             }
             return value;
         },
-        remove: function (item) {
+        remove : function(item) {
             var index = this.value.indexOf(item);
             if (index == -1) {
                 throw new Error('removing non-present item');
@@ -108,7 +111,7 @@
             this.save();
             return index;
         },
-        safeRemove: function (item) {
+        safeRemove : function(item) {
             var index = this.value.indexOf(item);
             if (index != -1) {
                 this.value.splice(index, 1);
@@ -116,35 +119,40 @@
             }
             return index;
         },
-        contains: function (item) {
+        contains : function(item) {
             return this.value.indexOf(item) !== -1;
         },
-        filter: function (id) {
+        filter : function(id) {
             return new PersistedArray(id, [].filter.apply(this.value, [].slice.call(arguments, 1)));
         },
-        forEach: function (func) {
-            this.value.forEach(func); //not saving
+        forEach : function(func) {
+            this.value.forEach(func);
+            //not saving
         },
-        pop: function(){
-            if(this.isEmpty()) return null;
+        pop : function() {
+            if (this.isEmpty())
+                return null;
             var entry = this.value[this.length - 1];
-            this.remove(this.length - 1);
-            return entry;   
+            this.remove(entry);
+            return entry;
         },
-        unshift: function(){
-            if(this.isEmpty()) return null;
+        unshift : function() {
+            if (this.isEmpty())
+                return null;
             var entry = this.value[0];
-            this.remove(0);
-            return entry;   
+            this.remove(entry);
+            return entry;
         },
-        get: function(index){
-            if(this.isEmpty()) return null;
-            return this.value[index];   
+        get : function(index) {
+            if (this.isEmpty())
+                return null;
+            return this.value[index];
         }
     };
-
+    
     var Logit = function() {
-        var LOG_PRIORITIES = {
+        
+        this.LOG_PRIORITIES = {
             EMERGENCY : 0,
             ERROR : 1,
             WARN : 2,
@@ -154,78 +162,83 @@
             TRACE : 6,
             VERBOSE : 7
         };
-        
-        var LOG_NAMES = {
-          1: 'emergency',
-          2: 'error',
-          3: 'warn',
-          4: 'info',
-          5: 'debug',
-          6: 'trace',
-          7: 'verbose'  
-        };
-        
-        var initialised = false;
-        var uri,
-            apiKey,
-            options,
-            queue;
 
+        this.LOG_NAMES = {
+            0 : 'emergency',
+            1 : 'error',
+            2 : 'warn',
+            3 : 'info',
+            4 : 'log',
+            5 : 'debug',
+            6 : 'trace',
+            7 : 'verbose'
+        };
+
+        this.initialised = false;
+        this.pausedSending = false;
+        this.verbosity = 7; //this.LOG_PRIORITIES.VERBOSE
+        this.uri;
+        this.apiKey;
+        this.options;
+        this.queue;
 
         function createMessage(priority, message, dimensions) {
-            if (!initialised) {
+            if (!this.initialised) {
                 alert('Logit.io plugin not initialised\n\nCall window.logit.init() first.');
                 return;
             }
             
-            if(options.defaultDimensions){
-                for(var k in options.defaultDimensions){
-                    dimensions[k] = options.defaultDimensions[k];
+            if(priority > this.verbosity) return;
+            
+            dimensions = dimensions || {};
+            if (this.options.defaultDimensions) {
+                for (var k in this.options.defaultDimensions) {
+                    dimensions[k] = this.options.defaultDimensions[k];
                 }
-            } 
+            }
 
             var message = {
-                timestamp: new Date().toISOString(),
+                timestamp : new Date().toISOString(),
                 message : message,
-                level : LOG_NAMES[priority],
+                level : this.LOG_NAMES[priority],
                 properties : dimensions
             };
-            queue.add(message);
-            checkAndSend();
-            
-            if(options.logToConsole){
+            this.queue.add(message);
+            checkAndSend.call(this);
+
+            if (this.options.logToConsole) {
                 var consoleFn;
-                if(priority <= 1){
+                if (priority <= 1) {
                     consoleFn = console.error;
-                }else if(priority == 2){
+                } else if (priority == 2) {
                     consoleFn = console.warn;
-                }else if(priority == 3){
+                } else if (priority == 3) {
                     consoleFn = console.info;
-                }else if(priority == 5){
+                } else if (priority == 5) {
                     consoleFn = console.debug;
-                }else{
+                } else {
                     consoleFn = console.log;
                 }
                 var msg = message.message;
                 delete message.message;
                 var details = JSON.stringify(message);
-                consoleFn(LOG_NAMES[priority].toUpperCase()+': '+msg+'; '+details);
+                consoleFn.call(console, this.LOG_NAMES[priority].toUpperCase() + ': ' + msg + '; ' + details);
             }
         }
-        
-        function sendMessageQueue(){
-            var message, request;
-            while(!queue.isEmpty() && navigator.onLine){
-                message = queue.pop();
-                request = new AjaxRequest(uri, apiKey, options.onSuccess, options.onError);
+
+        function sendMessageQueue() {
+            var message,
+                request;
+            while (!this.queue.isEmpty() && navigator.onLine && !this.pausedSending) {
+                message = this.queue.pop();
+                request = new AjaxRequest(this.uri, this.apiKey, this.options.onSuccess || function(){}, this.options.onError || function(){});
                 request.send(message);
             }
         }
-        
-        
-        function checkAndSend(){
-            if(navigator.onLine){
-                sendMessageQueue();
+
+        function checkAndSend() {
+            if (navigator.onLine) {
+                sendMessageQueue.call(this);
             }
         }
 
@@ -239,62 +252,73 @@
          * <li>{Function} onError - callback function to execute on error when sending a message to Logit.io endpoint.</li>
          * <li>{Object} defaultDimensions - JSON object describing default dimensions to send with every message.</li>
          * <li>{Boolean} logToConsole - if true, messages will be logged using window.console methods. Defaults to false.</li>
+         * <li>{Integer} verbosity - a value corresponding to an entry in this.LOG_PRIORITIES which filters log messages if the priority value is greater than the verbosity value. 
+         * Defaults to this.LOG_PRIORITIES.VERBOSE. 
          * </ul>
-         *  
+         *
          */
         this.init = function(uri, apiKey, options) {
-            if(!uri){
+            if (!uri) {
                 alert('URL of Logit endpoint must be specified as first parameter when calling window.logit.init()');
                 return;
             }
-            uri = uri;
-            if(!apiKey){
+            this.uri = uri;
+            if (!apiKey) {
                 alert('API key for Logit endpoint must be specified as second parameter when calling window.logit.init()');
                 return;
             }
-            apiKey = apiKey;
-            options = options || {};
-            
-            queue = new PersistedArray('logit');
-            
+            this.apiKey = apiKey;
+            this.options = options || {};
+
+            this.queue = new PersistedArray('logit');
+
             document.addEventListener('resume', checkAndSend);
             document.addEventListener('online', checkAndSend);
-            initialised = true;
+            this.initialised = true;
+        };
+        
+        this.pauseSending = function(){
+            this.pausedSending = true;
+        };
+        
+        this.resumeSending = function(){
+            this.pausedSending = false;
+            checkAndSend.call(this);
         };
 
         this.emergency = function(message, dimensions) {
-            createMessage(LOG_PRIORITIES.EMERGENCY, message, dimensions);
+            createMessage.call(this, this.LOG_PRIORITIES.EMERGENCY, message, dimensions);
         };
 
         this.error = function(message, dimensions) {
-            createMessage(LOG_PRIORITIES.ERROR, message, dimensions);
+            createMessage.call(this, this.LOG_PRIORITIES.ERROR, message, dimensions);
         };
 
         this.warn = function(message, dimensions) {
-            createMessage(LOG_PRIORITIES.WARN, message, dimensions);
+            createMessage.call(this, this.LOG_PRIORITIES.WARN, message, dimensions);
         };
 
         this.info = function(message, dimensions) {
-            createMessage(LOG_PRIORITIES.INFO, message, dimensions);
+            createMessage.call(this, this.LOG_PRIORITIES.INFO, message, dimensions);
         };
 
         this.log = function(message, dimensions) {
-            createMessage(LOG_PRIORITIES.LOG, message, dimensions);
+            createMessage.call(this, this.LOG_PRIORITIES.LOG, message, dimensions);
         };
 
         this.debug = function(message, dimensions) {
-            createMessage(LOG_PRIORITIES.DEBUG, message, dimensions);
+            createMessage.call(this, this.LOG_PRIORITIES.DEBUG, message, dimensions);
         };
 
         this.trace = function(message, dimensions) {
-            createMessage(LOG_PRIORITIES.TRACE, message, dimensions);
+            createMessage.call(this, this.LOG_PRIORITIES.TRACE, message, dimensions);
         };
 
         this.verbose = function(message, dimensions) {
-            createMessage(LOG_PRIORITIES.VERBOSE, message, dimensions);
+            createMessage.call(this, this.LOG_PRIORITIES.VERBOSE, message, dimensions);
         };
     };
-
-    module.exports = new Logit();
     
+    
+    module.exports = new Logit();
 })();
