@@ -43,9 +43,16 @@
         
         /**
          * Maximum size of queued messages in local storage, after which messages at the start of the queue will get dropped as new messages are added.
+         * Defaults to 2000.
          * @type {Integer} 
          */
         this.maxQueueSize = 2000;
+        
+        /**
+         * Interval in ms at which to send messages queued in local storage. Defaults to 200ms.
+         * @type {Integer} 
+         */
+        this.sendInterval = 200;
         
         /**
          * URI of Logit endpoint to POST to 
@@ -70,6 +77,12 @@
          * @type {PersistedArray}
          */
         this.queue;
+        
+        /**
+         *  Flag indicating if queued messages are currently being sent.
+         * @type {Boolean}
+         */
+        this.sending = false;
 
         
         /**************
@@ -91,6 +104,7 @@
          * <li>{Integer} maxQueueSize - maxiumum number of messages to store in the persistent queue. 
          * Once this value is reached, adding a message to the end of the queue will cause the first message at the start of the queue to be dropped.
          * Defaults to 2000. </li>
+         * <li>{Integer} sendInterval - Interval in ms at which to send messages queued in local storage. Defaults to 200ms.</li>
          * </ul>
          *
          */
@@ -115,6 +129,8 @@
                 this.verbosity = this.options.verbosity;
             }
             localStorage.setItem('logit_verbosity', this.verbosity);
+            
+            if(this.options.sendInterval) this.sendInterval = this.options.sendInterval;
 
             this.queue = new PersistedArray('logit_queue');
 
@@ -301,6 +317,18 @@
         /*************
          * Internals *
          *************/
+        this._intervalSend = function(){
+            if(!this.queue.isEmpty() && !this.pausedSending) {
+                this.sending = true;
+                var message = this.queue.unshift(); // take the first message off the queue
+                var request = new AjaxRequest(this.uri, this.apiKey, this.options.onSuccess || function(){}, this.options.onError || function(){});
+                request.send(message);
+                setTimeout(this._intervalSend.bind(this), this.sendInterval);
+            }else{
+                this.sending = false;
+            }
+        }
+        
         function createMessage(priority, message, dimensions, opts) {
             if (!this.initialised) {
                 alert('Logit.io plugin not initialised\n\nCall window.logit.init() first.');
@@ -353,19 +381,9 @@
             }
         }
 
-        function sendMessageQueue() {
-            var message,
-                request;
-            while (this.queue && !this.queue.isEmpty() && navigator.onLine && !this.pausedSending) {
-                message = this.queue.pop();
-                request = new AjaxRequest(this.uri, this.apiKey, this.options.onSuccess || function(){}, this.options.onError || function(){});
-                request.send(message);
-            }
-        }
-
         function checkAndSend() {
-            if (navigator.onLine) {
-                sendMessageQueue.call(this);
+            if (this.queue && navigator.onLine && !this.sending) {
+                this._intervalSend();
             }
         }
     };
