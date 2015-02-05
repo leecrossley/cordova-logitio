@@ -91,8 +91,8 @@
 
         /**
          * Initialises plugin for use. Must be called before logging functions are called.
-         * @param {String} uri - URI of Logit.io endpoint
-         * @param {String} apiKey - your Logit.io API Key, which grants you app access to the endpoint
+         * @param {String} uri - URI of Logit.io endpoint.
+         * @param {String} apiKey - your Logit.io API Key, which grants you app access to the endpoint.
          * @param {Object} options - optional parameters, with the following key names:
          * <ul>
          * <li>{Function} onSuccess - callback function to execute on successfully sending a message to Logit.io endpoint.</li>
@@ -150,7 +150,7 @@
         };
         
         /**
-         * Resumes sending of queued messages when online
+         * Resumes sending of queued messages when online.
          */
         this.resumeSending = function(){
             if(this.pausedSending){
@@ -317,6 +317,7 @@
         /*************
          * Internals *
          *************/
+        
         this._intervalSend = function(){
             if(!this.queue.isEmpty() && !this.pausedSending) {
                 this.sending = true;
