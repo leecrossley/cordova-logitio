@@ -71,7 +71,7 @@ logit.init(uri, apiKey, options);
 - {Object} options - (optional) parameters with the following key names:
     - {Function} onSuccess - callback function to execute on successfully sending a message to Logit.io endpoint.
     - {Function} onError - callback function to execute on error when sending a message to Logit.io endpoint.
-    - {Object} defaultDimensions - JSON object describing default dimensions to send with every message.
+    - {Object} defaultDimensions - JSON object describing default dimensions to send with every message. For example, device/OS details, app version details, user details, etc.
     - {Boolean} logToConsole - if true, messages will be logged using window.console methods. Defaults to false.
     - {Integer} verbosity - a value corresponding to an entry in this.LOG_PRIORITIES which filters log messages if the priority value is greater than the verbosity value. Defaults to this.LOG_PRIORITIES.VERBOSE.
     - {Integer} maxQueueSize - maxiumum number of messages to store in the persistent queue. Once this value is reached, adding a message to the end of the queue will cause the first message at the start of the queue to be dropped. Defaults to 2000.
