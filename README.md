@@ -20,26 +20,26 @@ Logit.io can be installed with:
 [Cordova CLI](http://cordova.apache.org/docs/en/edge/guide_cli_index.md.html):
 
 ```
-$ cordova plugin add io.logit
+$ cordova plugin add io.logit.cordova
 ```
 
 [PhoneGap CLI](http://docs.phonegap.com/en/edge/guide_cli_index.md.html):
 
 ```
-$ phonegap plugin add io.logit
+$ phonegap plugin add io.logit.cordova
 ```
 
 [Cordova Plugman](https://github.com/apache/cordova-plugman):
 
 
 ```
-$ plugman install --plugin io.logit --platform <ios|amazon-fireos|android|blackberry10|wp8> --project platforms/<platform> --plugins_dir plugins
+$ plugman install --plugin io.logit.cordova --platform <ios|amazon-fireos|android|blackberry10|wp8> --project platforms/<platform> --plugins_dir plugins
 ```
 
 For example, to install for Android:
 
 ```
-$ plugman install --plugin io.logit --platform android --project platforms/android --plugins_dir plugins
+$ plugman install --plugin io.logit.cordova --platform android --project platforms/android --plugins_dir plugins
 ```
 
 
@@ -50,7 +50,7 @@ It's recommended you make this a global reference so you can access the plugin f
 
 
 ```
-window.logit = cordova.require('io.logit.Logit');
+window.logit = cordova.require('io.logit.cordova.Logit');
 ```
 
 You can then refer to the plugin from anywhere in your code as simply `logit`.

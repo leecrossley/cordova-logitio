@@ -1,5 +1,5 @@
 {
-    "name": "io.logit",
+    "name": "io.logit.cordova",
     "cordova_name": "Logit.io Plugin",
     "version": "0.1.0",
     "description": "Cordova plugin to integrate with logit.io logging system",
