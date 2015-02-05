@@ -7,7 +7,7 @@ version="0.1.0">
     </engines>
     <name>Logit.io Plugin</name>
     <description>Cordova plugin to integrate with logit.io logging system</description>
-    <keywords>cordova,phonegap,ios,android,logit,io</keywords>
+    <keywords>cordova,phonegap,ios,android,logit,io,logging,error,tracking,debugging</keywords>
     <author>Dave Alden</author>
     <license>MIT License</license>
     <repo>https://github.com/logit-io2/cordova-logitio.git</repo>
