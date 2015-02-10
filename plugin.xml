@@ -10,8 +10,8 @@ version="0.1.0">
     <keywords>cordova,phonegap,ios,android,logit,io,logging,error,tracking,debugging</keywords>
     <author>Dave Alden</author>
     <license>MIT License</license>
-    <repo>https://github.com/logit-io2/cordova-logitio.git</repo>
-    <issue>https://github.com/logit-io2/cordova-logitio/issues</issue>
+    <repo>https://github.com/logit-io/cordova-logitio.git</repo>
+    <issue>https://github.com/logit-io/cordova-logitio/issues</issue>
 
     <!-- android -->
     <platform name="android">
