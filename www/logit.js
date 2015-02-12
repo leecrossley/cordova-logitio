@@ -83,6 +83,12 @@
          * @type {Boolean}
          */
         this.sending = false;
+        
+        /**
+         *  Flag indicating if queueing/sending of messages te remote endpoint should be disabled. Defaults to false.
+         * @type {Boolean}
+         */
+        this.disableSending = false;
 
         
         /**************
@@ -105,6 +111,8 @@
          * Once this value is reached, adding a message to the end of the queue will cause the first message at the start of the queue to be dropped.
          * Defaults to 2000. </li>
          * <li>{Integer} sendInterval - Interval in ms at which to send messages queued in local storage. Defaults to 200ms.</li>
+         * <li>{Boolean} disableSending - if true, sending of messages to remote Logit endpoint is disabled and messages are not added to send queue. 
+         * This is useful for development phases when it's useful to use the plugin to log to the console but not to the remote endpoint. Defaults to false.</li>
          * </ul>
          *
          */
@@ -131,6 +139,7 @@
             localStorage.setItem('logit_verbosity', this.verbosity);
             
             if(this.options.sendInterval) this.sendInterval = this.options.sendInterval;
+            if(typeof(this.options.disableSending) != 'undefined') this.disableSending = this.options.disableSending;
 
             this.queue = new PersistedArray('logit_queue');
 
@@ -191,7 +200,7 @@
          */
         this.getVerbosity = function(){
             return this.verbosity;
-        }
+        };
         
         /**
          * Returns the string name of a log priority given the priority value.
@@ -208,7 +217,7 @@
                 }
             }
             return name;
-        }
+        };
         
         /**
          * Sends a message with emergency priority.
@@ -328,7 +337,7 @@
             }else{
                 this.sending = false;
             }
-        }
+        };
         
         function createMessage(priority, message, dimensions, opts) {
             if (!this.initialised) {
@@ -354,13 +363,15 @@
                 properties : dimensions
             };
             
-            if(this.queue.length == this.maxQueueSize){
-                this.queue.unshift(); //remove first item
-                this.warn('Logit message queue message size exceeded', null, {force: true});
+            if(!this.disableSending){
+                if(this.queue.length == this.maxQueueSize){
+                    this.queue.unshift(); //remove first item
+                    this.warn('Logit message queue message size exceeded', null, {force: true});
+                }
+                this.queue.add(message);
+                
+                checkAndSend.call(this);
             }
-            this.queue.add(message);
-            
-            checkAndSend.call(this);
 
             if (this.options.logToConsole) {
                 var consoleFn;
@@ -383,7 +394,7 @@
         }
 
         function checkAndSend() {
-            if (this.queue && navigator.onLine && !this.sending) {
+            if (!this.disableSending && this.queue && navigator.onLine && !this.sending) {
                 this._intervalSend();
             }
         }

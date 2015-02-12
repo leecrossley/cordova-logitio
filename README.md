@@ -76,6 +76,7 @@ logit.init(uri, apiKey, options);
     - {Integer} verbosity - a value corresponding to an entry in this.LOG_PRIORITIES which filters log messages if the priority value is greater than the verbosity value. Defaults to this.LOG_PRIORITIES.VERBOSE.
     - {Integer} maxQueueSize - maxiumum number of messages to store in the persistent queue. Once this value is reached, adding a message to the end of the queue will cause the first message at the start of the queue to be dropped. Defaults to 2000.
     - {Integer} sendInterval - Interval in ms at which to send messages queued in local storage. Defaults to 200ms.
+    - {Boolean} disableSending - if true, sending of messages to remote Logit endpoint is disabled and messages are not added to send queue. This is useful for development phases when it's useful to use the plugin to log to the console but not to the remote endpoint. Defaults to false.
 
 ## Logging messages
 
