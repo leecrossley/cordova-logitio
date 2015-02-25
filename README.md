@@ -12,7 +12,7 @@ Cordova/Phonegap 3.0 or greater is required.
 * [Installing](#installing)
 * [Using the plugin](#using-the-plugin)
 * [License](#license)
- 
+
 # Installing
 
 Logit.io can be installed with:
@@ -45,19 +45,13 @@ $ plugman install --plugin io.logit.cordova --platform android --project platfor
 
 # Using the plugin
 
-Once the plugin is installed, you app can make use of it by using cordova.require() to obtain a reference to it. 
-It's recommended you make this a global reference so you can access the plugin from anywhere within your app, for example:
-
-
-```
-window.logit = cordova.require('io.logit.cordova.Logit');
-```
+Once the plugin is installed, you do not need to reference any JavaScript, the Cordova plugin architecture will add the `logit` object to your root automatically.
 
 You can then refer to the plugin from anywhere in your code as simply `logit`.
 
 ## Initialisation
 
-Before you can use the plugin, you need to initialise it by passing it some setup options by calling the the `init()` function. 
+Before you can use the plugin, you need to initialise it by passing it some setup options by calling the the `init()` function.
 The first two parameters are required and the third is a bunch of options:
 
 ```
@@ -108,7 +102,7 @@ The plugin exposes the following additional functions:
     - {Mixed} verbosity - new verbosity value to set, either as an integer value of 0 to 7, of as the string name of the corresponding priority (case-insensitive), e.g. "error"
 - `logit.getVerbosity();` Returns the current verbosity for logit messages.
 - `logit.getPriorityName(priority);` Returns the string name of a log priority given the priority value. Returns null if a matching name is not found.
-    - {Integer} priority - numerical priority value to find name for. 
+    - {Integer} priority - numerical priority value to find name for.
 
 
 License
