@@ -2,14 +2,14 @@
 
     /**
      * @class Logit
-     * Provides an interface to log applications messages from a Cordova app to a Logit.io endpoint 
+     * Provides an interface to log applications messages from a Cordova app to a Logit.io endpoint
      */
     var Logit = function() {
-        
+
         /**
          * Determines the importance of the message.
          * Maps name to value.
-         * @type {Object} 
+         * @type {Object}
          */
         this.LOG_PRIORITIES = {
             EMERGENCY : 0,
@@ -21,76 +21,76 @@
             TRACE : 6,
             VERBOSE : 7
         };
-        
+
         /**
-         * Whether plugin has been initialised with the init() method 
+         * Whether plugin has been initialised with the init() method
          * @type {Boolean}
          */
         this.initialised = false;
-        
+
         /**
          * Flag indicating when sending of message queue has been paused using pauseSending() method
-         * @type {Boolean} 
+         * @type {Boolean}
          */
         this.pausedSending = false;
-        
+
         /**
-         * A value corresponding to an entry in this.LOG_PRIORITIES which filters log messages if the priority value is greater than the verbosity value. 
+         * A value corresponding to an entry in this.LOG_PRIORITIES which filters log messages if the priority value is greater than the verbosity value.
          * Defaults to this.LOG_PRIORITIES.VERBOSE.
-         * @type {Integer}  
+         * @type {Integer}
          */
         this.verbosity = 7;
-        
+
         /**
          * Maximum size of queued messages in local storage, after which messages at the start of the queue will get dropped as new messages are added.
          * Defaults to 2000.
-         * @type {Integer} 
+         * @type {Integer}
          */
         this.maxQueueSize = 2000;
-        
+
         /**
          * Interval in ms at which to send messages queued in local storage. Defaults to 200ms.
-         * @type {Integer} 
+         * @type {Integer}
          */
         this.sendInterval = 200;
-        
+
         /**
-         * URI of Logit endpoint to POST to 
+         * URI of Logit endpoint to POST to
          * @type {String}
          */
         this.uri;
-        
+
         /**
          * API used to access logit endpoint
          * @type {String}
          */
         this.apiKey;
-        
+
         /**
-         * Configuration options 
+         * Configuration options
          * @type {Object}
          */
         this.options;
-        
+
         /**
          *  Persistent message queue
          * @type {PersistedArray}
          */
         this.queue;
-        
+
         /**
          *  Flag indicating if queued messages are currently being sent.
          * @type {Boolean}
          */
         this.sending = false;
-        
+
         /**
          *  Flag indicating if queueing/sending of messages te remote endpoint should be disabled. Defaults to false.
          * @type {Boolean}
          */
         this.disableSending = false;
 
-        
+
         /**************
          * Public API *
          **************/
@@ -105,13 +105,13 @@
          * <li>{Function} onError - callback function to execute on error when sending a message to Logit.io endpoint.</li>
          * <li>{Object} defaultDimensions - JSON object describing default dimensions to send with every message.</li>
          * <li>{Boolean} logToConsole - if true, messages will be logged using window.console methods. Defaults to false.</li>
-         * <li>{Integer} verbosity - a value corresponding to an entry in this.LOG_PRIORITIES which filters log messages if the priority value is greater than the verbosity value. 
+         * <li>{Integer} verbosity - a value corresponding to an entry in this.LOG_PRIORITIES which filters log messages if the priority value is greater than the verbosity value.
          * Defaults to this.LOG_PRIORITIES.VERBOSE. </li>
-         * <li>{Integer} maxQueueSize - maxiumum number of messages to store in the persistent queue. 
+         * <li>{Integer} maxQueueSize - maxiumum number of messages to store in the persistent queue.
          * Once this value is reached, adding a message to the end of the queue will cause the first message at the start of the queue to be dropped.
          * Defaults to 2000. </li>
          * <li>{Integer} sendInterval - Interval in ms at which to send messages queued in local storage. Defaults to 200ms.</li>
-         * <li>{Boolean} disableSending - if true, sending of messages to remote Logit endpoint is disabled and messages are not added to send queue. 
+         * <li>{Boolean} disableSending - if true, sending of messages to remote Logit endpoint is disabled and messages are not added to send queue.
          * This is useful for development phases when it's useful to use the plugin to log to the console but not to the remote endpoint. Defaults to false.</li>
          * </ul>
          *
@@ -128,7 +128,7 @@
             }
             this.apiKey = apiKey;
             this.options = options || {};
-            
+
             // Set verbosity
             var storedVerbosity = localStorage.getItem('logit_verbosity');
             if(storedVerbosity){
@@ -137,7 +137,7 @@
                 this.verbosity = this.options.verbosity;
             }
             localStorage.setItem('logit_verbosity', this.verbosity);
-            
+
             if(this.options.sendInterval) this.sendInterval = this.options.sendInterval;
             if(typeof(this.options.disableSending) != 'undefined') this.disableSending = this.options.disableSending;
 
@@ -148,16 +148,16 @@
             this.initialised = true;
             checkAndSend.call(this);
         };
-        
+
         /**
          * Pauses sending of queued messages when online.
          * Note: if the number of queued messages reaches the configured maxQueueSize while sending is paused,
-         * each time a new message is added to the queue, the first message will be lost. 
+         * each time a new message is added to the queue, the first message will be lost.
          */
         this.pauseSending = function(){
             this.pausedSending = true;
         };
-        
+
         /**
          * Resumes sending of queued messages when online.
          */
@@ -167,10 +167,10 @@
                 checkAndSend.call(this);
             }
         };
-        
+
         /**
          * Sets the current verbosity for logit messages.
-         * 
+         *
          * @param {Mixed} verbosity - new verbosity value to set, either as an integer value of 0 to 7,
          * of as the string name of the corresponding priority (case-insensitive), e.g. "error"
          */
@@ -181,9 +181,9 @@
             if(typeof(verbosity) != 'number' || verbosity < this.LOG_PRIORITIES.EMERGENCY || verbosity > this.LOG_PRIORITIES.VERBOSE){
                 throw new Error('verbosity value must be an integer between '+this.LOG_PRIORITIES.EMERGENCY+' and '+this.LOG_PRIORITIES.VERBOSE);
             }
-            
+
             if(this.verbosity == verbosity) return;
-            
+
             this.info('Set logit verbosity', {
                previous: this.getPriorityName(this.verbosity).toLowerCase(),
                current: this.getPriorityName(verbosity).toLowerCase()
@@ -193,20 +193,20 @@
             this.verbosity = verbosity;
             localStorage.setItem('logit_verbosity', this.verbosity);
         };
-        
+
         /**
          * Returns the current verbosity for logit messages.
-         * @return {Integer} the current log verbosity 
+         * @return {Integer} the current log verbosity
          */
         this.getVerbosity = function(){
             return this.verbosity;
         };
-        
+
         /**
          * Returns the string name of a log priority given the priority value.
          * Returns null if a matching name is not found.
          * @param {Integer} priority - numerical priority value to find name for.
-         * @return {String} log priority name  
+         * @return {String} log priority name
          */
         this.getPriorityName = function(priority){
             var k, name = null;
@@ -218,7 +218,7 @@
             }
             return name;
         };
-        
+
         /**
          * Sends a message with emergency priority.
          * @param {String} message - the message to send
@@ -226,12 +226,12 @@
          * @param {Object} opts - (optional) additional options:
          * <ul>
          * <li>{Boolean} force - if true, the message will be sent even if the priority is greater than the current verbosity.</li>
-         * </ul> 
+         * </ul>
          */
         this.emergency = function(message, dimensions, opts) {
-            createMessage.call(this, this.LOG_PRIORITIES.EMERGENCY, message, dimensions, opts);
+            this.createMessage(this.LOG_PRIORITIES.EMERGENCY, message, dimensions, opts);
         };
-        
+
         /**
          * Sends a message with error priority.
          * @param {String} message - the message to send
@@ -239,10 +239,10 @@
          * @param {Object} opts - (optional) additional options:
          * <ul>
          * <li>{Boolean} force - if true, the message will be sent even if the priority is greater than the current verbosity.</li>
-         * </ul> 
+         * </ul>
          */
         this.error = function(message, dimensions, opts) {
-            createMessage.call(this, this.LOG_PRIORITIES.ERROR, message, dimensions, opts);
+            this.createMessage(this.LOG_PRIORITIES.ERROR, message, dimensions, opts);
         };
 
         /**
@@ -252,10 +252,10 @@
          * @param {Object} opts - (optional) additional options:
          * <ul>
          * <li>{Boolean} force - if true, the message will be sent even if the priority is greater than the current verbosity.</li>
-         * </ul> 
+         * </ul>
          */
         this.warn = function(message, dimensions, opts) {
-            createMessage.call(this, this.LOG_PRIORITIES.WARN, message, dimensions, opts);
+            this.createMessage(this.LOG_PRIORITIES.WARN, message, dimensions, opts);
         };
 
         /**
@@ -265,10 +265,10 @@
          * @param {Object} opts - (optional) additional options:
          * <ul>
          * <li>{Boolean} force - if true, the message will be sent even if the priority is greater than the current verbosity.</li>
-         * </ul> 
+         * </ul>
          */
         this.info = function(message, dimensions, opts) {
-            createMessage.call(this, this.LOG_PRIORITIES.INFO, message, dimensions, opts);
+            this.createMessage(this.LOG_PRIORITIES.INFO, message, dimensions, opts);
         };
 
         /**
@@ -278,10 +278,10 @@
          * @param {Object} opts - (optional) additional options:
          * <ul>
          * <li>{Boolean} force - if true, the message will be sent even if the priority is greater than the current verbosity.</li>
-         * </ul> 
+         * </ul>
          */
         this.log = function(message, dimensions, opts) {
-            createMessage.call(this, this.LOG_PRIORITIES.LOG, message, dimensions, opts);
+            this.createMessage(this.LOG_PRIORITIES.LOG, message, dimensions, opts);
         };
 
         /**
@@ -291,10 +291,10 @@
          * @param {Object} opts - (optional) additional options:
          * <ul>
          * <li>{Boolean} force - if true, the message will be sent even if the priority is greater than the current verbosity.</li>
-         * </ul> 
+         * </ul>
          */
         this.debug = function(message, dimensions, opts) {
-            createMessage.call(this, this.LOG_PRIORITIES.DEBUG, message, dimensions, opts);
+            this.createMessage(this.LOG_PRIORITIES.DEBUG, message, dimensions, opts);
         };
 
         /**
@@ -304,10 +304,10 @@
          * @param {Object} opts - (optional) additional options:
          * <ul>
          * <li>{Boolean} force - if true, the message will be sent even if the priority is greater than the current verbosity.</li>
-         * </ul> 
+         * </ul>
          */
         this.trace = function(message, dimensions, opts) {
-            createMessage.call(this, this.LOG_PRIORITIES.TRACE, message, dimensions, opts);
+            this.createMessage(this.LOG_PRIORITIES.TRACE, message, dimensions, opts);
         };
 
         /**
@@ -317,38 +317,32 @@
          * @param {Object} opts - (optional) additional options:
          * <ul>
          * <li>{Boolean} force - if true, the message will be sent even if the priority is greater than the current verbosity.</li>
-         * </ul> 
+         * </ul>
          */
         this.verbose = function(message, dimensions, opts) {
-            createMessage.call(this, this.LOG_PRIORITIES.VERBOSE, message, dimensions, opts);
+            this.createMessage(this.LOG_PRIORITIES.VERBOSE, message, dimensions, opts);
         };
-        
-        /*************
-         * Internals *
-         *************/
-        
-        this._intervalSend = function(){
-            if(!this.queue.isEmpty() && !this.pausedSending) {
-                this.sending = true;
-                var message = this.queue.unshift(); // take the first message off the queue
-                var request = new AjaxRequest(this.uri, this.apiKey, this.options.onSuccess || function(){}, this.options.onError || function(){});
-                request.send(message);
-                setTimeout(this._intervalSend.bind(this), this.sendInterval);
-            }else{
-                this.sending = false;
-            }
-        };
-        
-        function createMessage(priority, message, dimensions, opts) {
+
+        /**
+         * Sends a message with specified priority.
+         * @param {Integer} priority - a message priority as defined in LOG_PRIORITIES
+         * @param {String} message - the message to send
+         * @param {Object} dimensions - a list of custom dimensions in key/value form
+         * @param {Object} opts - (optional) additional options:
+         * <ul>
+         * <li>{Boolean} force - if true, the message will be sent even if the priority is greater than the current verbosity.</li>
+         * </ul>
+         */
+        this.createMessage = function (priority, message, dimensions, opts) {
             if (!this.initialised) {
                 alert('Logit.io plugin not initialised\n\nCall window.logit.init() first.');
                 return;
             }
-            
+
             opts = opts || {};
-            
+
             if(priority > this.verbosity && !opts.force) return;
-            
+
             dimensions = dimensions || {};
             if (this.options.defaultDimensions) {
                 for (var k in this.options.defaultDimensions) {
@@ -362,14 +356,14 @@
                 level : this.getPriorityName(priority).toLowerCase(),
                 properties : dimensions
             };
-            
+
             if(!this.disableSending){
                 if(this.queue.length == this.maxQueueSize){
                     this.queue.unshift(); //remove first item
                     this.warn('Logit message queue message size exceeded', null, {force: true});
                 }
                 this.queue.add(message);
-                
+
                 checkAndSend.call(this);
             }
 
@@ -391,7 +385,23 @@
                 var details = JSON.stringify(message);
                 consoleFn.call(console, this.getPriorityName(priority) + ': ' + msg + '; ' + details);
             }
-        }
+        };
+
+        /*************
+         * Internals *
+         *************/
+
+        this._intervalSend = function(){
+            if(!this.queue.isEmpty() && !this.pausedSending) {
+                this.sending = true;
+                var message = this.queue.unshift(); // take the first message off the queue
+                var request = new AjaxRequest(this.uri, this.apiKey, this.options.onSuccess || function(){}, this.options.onError || function(){});
+                request.send(message);
+                setTimeout(this._intervalSend.bind(this), this.sendInterval);
+            }else{
+                this.sending = false;
+            }
+        };
 
         function checkAndSend() {
             if (!this.disableSending && this.queue && navigator.onLine && !this.sending) {
@@ -399,7 +409,7 @@
             }
         }
     };
-    
+
     function AjaxRequest(uri, apiKey, successCallback, failureCallback) {
         this.uri = uri;
         this.apiKey = apiKey;
@@ -448,7 +458,7 @@
                 }
                 this.successCallback(xhr.responseText);
             }
-        },
+        }
     };
 
     function PersistedArray(localStorageId) {
@@ -549,6 +559,6 @@
             return this.value[index];
         }
     };
-    
+
     module.exports = new Logit();
 })();
