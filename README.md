@@ -15,33 +15,17 @@ Cordova/Phonegap 3.0 or greater is required.
 
 # Installing
 
-Logit.io can be installed with:
-
-[Cordova CLI](http://cordova.apache.org/docs/en/edge/guide_cli_index.md.html):
+**Latest published version on npm (with Cordova CLI >= 5.0.0)**
 
 ```
-$ cordova plugin add io.logit.cordova
+cordova plugin add cordova-plugin-logit
 ```
 
-[PhoneGap CLI](http://docs.phonegap.com/en/edge/guide_cli_index.md.html):
+**Latest version from GitHub**
 
 ```
-$ phonegap plugin add io.logit.cordova
+cordova plugin add https://github.com/logit-io/cordova-logitio.git
 ```
-
-[Cordova Plugman](https://github.com/apache/cordova-plugman):
-
-
-```
-$ plugman install --plugin io.logit.cordova --platform <ios|amazon-fireos|android|blackberry10|wp8> --project platforms/<platform> --plugins_dir plugins
-```
-
-For example, to install for Android:
-
-```
-$ plugman install --plugin io.logit.cordova --platform android --project platforms/android --plugins_dir plugins
-```
-
 
 # Using the plugin
 

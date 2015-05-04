@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-id="io.logit.cordova"
-version="0.1.2">
+<?xml version='1.0' encoding='UTF-8'?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-logit" version="0.2.0">
     <engines>
         <engine name="cordova" version=">=3.0.0" />
     </engines>

@@ -1,24 +1,51 @@
 {
-    "name": "io.logit.cordova",
-    "cordova_name": "Logit.io Plugin",
-    "version": "0.1.2",
-    "description": "Cordova plugin to integrate with logit.io logging system",
-    "license": "MIT License",
-    "repo": "https://github.com/logit-io/cordova-logitio.git",
-    "keywords": ["cordova","phonegap","ios","android","logit","io","logging","error tracking","debugging"],
+  "name": "cordova-plugin-logit",
+  "version": "0.2.0",
+  "description": "Cordova plugin to integrate with logit.io logging system",
+  "cordova": {
+    "id": "cordova-plugin-logit",
     "platforms": [
-        "android",
-        "amazon-fireos",
-        "ubuntu",
-        "ios",
-        "wp7",
-        "wp8",
-        "windows8"
-    ],
-    "engines": [
-        {
-            "name": "cordova",
-            "version": ">=3.0.0"
-        }
+      "firefoxos",
+      "tizen",
+      "android",
+      "amazon-fireos",
+      "ubuntu",
+      "ios",
+      "blackberry10",
+      "wp7",
+      "wp8",
+      "windows8",
+      "windows",
+      "browser"
     ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/logit-io/cordova-logitio.git"
+  },
+  "keywords": [
+    "cordova",
+    "phonegap",
+    "ios",
+    "android",
+    "logit",
+    "io",
+    "logging",
+    "error",
+    "tracking",
+    "debugging",
+    "ecosystem:cordova"
+  ],
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=3.0.0"
+    }
+  ],
+  "author": "Dave Alden",
+  "license": "MIT License",
+  "bugs": {
+    "url": "https://github.com/logit-io/cordova-logitio/issues"
+  },
+  "homepage": "https://github.com/logit-io/cordova-logitio#readme"
 }
